@@ -1,5 +1,5 @@
 local mod = "Misty Step"
-local config = mwse.loadConfig(mod, {logLevel = "INFO", targetMode = "camera"})
+local config = mwse.loadConfig(mod, {logLevel = 3, targetMode = "camera"})
 local log = mwse.Logger.new()
 
 local UNITS_PER_FOOT = 22.1
@@ -141,10 +141,10 @@ local function registerModConfig()
     local template = mwse.mcm.createTemplate({name = mod, config = config})
     template:register()
     template:saveOnClose(mod, config)
-    local settings = template:createPage({label = "Settings"})
+    local settings = template:createSideBarPage({label = "Settings"})
     settings:createDropdown{
         label = "Should Misty Step use camera aim (includes up/down) or character facing (horizontal only)?",
-        description = "Camera: uses camera aim (including up/down). Facing: uses character facing and ignores vertical aim.",
+        description = "- Camera: uses camera aim (including up/down). \n\n- Facing: uses character facing and ignores vertical aim.",
         options = {
             {label = "Camera Mode", value = "camera"},
             {label = "Facing Mode", value = "facing"}
