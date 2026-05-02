@@ -1,0 +1,7 @@
+{
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.workspace.library": ["D:/Morrowind Modded/Data Files/MWSE/core/meta"],
+    "Lua.diagnostics.globals": ["tes3", "mwse", "event", "tes3vector3"],
+    "Lua.diagnostics.libraryFiles": "Disable"
+}

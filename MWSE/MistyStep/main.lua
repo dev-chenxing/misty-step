@@ -64,6 +64,7 @@ end)
 
 event.register(tes3.event.loaded, function()
     local spell = tes3.createObject({objectType = tes3.objectType.spell})
+    ---@cast spell tes3spell
     tes3.setSourceless(spell)
     spell.name = "Misty Step"
     spell.magickaCost = 1
