@@ -13,6 +13,8 @@
   - [x] feat: compute the candidate landing point and preserve the current orientation when calling `tes3.positionCell`; for player feel, `suppressFader = true` and `teleportCompanions = false`
   - [ ] feat: validate the landing spot vertically; the main failure case is blinking into a ledge, stair, or uneven ground; do a short downward ray from candidate + upward offset to find the floor and set Z from that hit; if that ray misses, cancel the cast or shorten the blink and try again, up to a maximum number of attempts (e.g. 5)
 - [x] feat: add MCM settings to toggle between "camera" (default) and "facing" target modes
+- [ ] docs: add metadata.toml
+- [ ] feat: distribute the Misty Step spell
 
 ## Icons
 - [ ] feat: add icon for effect
