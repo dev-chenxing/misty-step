@@ -1,6 +1,6 @@
 local mod = "Misty Step"
 local config = mwse.loadConfig(mod, {logLevel = 3, targetMode = "camera"})
-local log = mwse.Logger.new()
+local log = mwse.Logger.new({modName = mod, logLevel = config.logLevel})
 
 local UNITS_PER_FOOT = 22.1
 local MAX_BLINK_DISTANCE = 60 * UNITS_PER_FOOT
@@ -17,18 +17,19 @@ tes3.claimSpellEffectId("mistyStep", 8377)
 local function getBlinkRay(caster)
     -- `camera` mode: only when the caster is the player, use `tes3.getPlayerEyePosition()` and `tes3.getPlayerEyeVector()` to give the blink a more "aimed" feel based on camera direction; this is the default option for the spell and can be toggled in the MCM
     if config.targetMode == "camera" and caster == tes3.mobilePlayer then
-        return {
-            position = tes3.getPlayerEyePosition(),
-            direction = tes3.getPlayerEyeVector()
-        }
+        local pos = tes3.getPlayerEyePosition()
+        local dir = tes3.getPlayerEyeVector()
+        log:debug("getBlinkRay (camera): position=%s direction=%s", pos, dir)
+        return {position = pos, direction = dir}
     end
 
     -- `facing` mode: use `caster.facing` and a horizontal forward vector
     local facing = caster.facing
-    return {
-        position = caster.position + tes3vector3.new(0, 0, caster.height * 0.93), -- roughly eye level
-        direction = tes3vector3.new(math.sin(facing), math.cos(facing), 0)
-    }
+    local pos = caster.position + tes3vector3.new(0, 0, caster.height * 0.93) -- roughly eye level
+    local dir = tes3vector3.new(math.sin(facing), math.cos(facing), 0)
+    log:debug("getBlinkRay (facing): position=%s direction=%s facing=%.3f", pos,
+              dir, facing)
+    return {position = pos, direction = dir}
 end
 
 --- The main logic of the misty step effect. This is called on every tick of the effect, but we only want to trigger on the first tick, which is when the spell is cast.
@@ -39,29 +40,61 @@ local function onTickMistyStep(e)
     -- Misty Step: Blink forward (60 ft at most), stopping before collision
     -- The conversion factor used in the engine between units to feet is 22.1 units/foot.
     local casterRef = e.sourceInstance.caster
+    if not casterRef then
+        log:error("onTickMistyStep: missing caster reference, aborting")
+        return
+    end
     log:debug("onTickMistyStep called for %s",
-              casterRef and casterRef.object and casterRef.object.name or
-                  "unknown caster")
+              casterRef and (casterRef.id or "unknown-id") or "unknown-ref")
     local caster = casterRef.mobile
+    if not caster then
+        log:error("onTickMistyStep: casterRef.mobile is nil, aborting")
+        return
+    end
+    log:debug("caster state: position=%s height=%.3f cell=%s", caster.position,
+              caster.height or 0,
+              caster.cell and (caster.cell.name or "unnamed") or "nil")
     ---@cast caster tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
     local blink = getBlinkRay(caster)
+    log:debug("computed blink ray: origin=%s direction=%s", blink.position,
+              blink.direction)
     local blinkHit = tes3.rayTest({
         position = blink.position,
         direction = blink.direction,
         ignore = {casterRef},
         maxDistance = MAX_BLINK_DISTANCE
     })
+    if blinkHit then
+        log:debug(
+            "blinkHit: distance=%.3f units (%.3f ft) intersection=%s reference=%s",
+            blinkHit.distance, blinkHit.distance / UNITS_PER_FOOT,
+            blinkHit.intersection,
+            blinkHit.reference and (blinkHit.reference.id or "nil") or "nil")
+    else
+        log:debug("blinkHit: none (clear to max distance)")
+    end
+
     local blinkDistance = blinkHit and
-                              math.max(0, blinkHit.distance - UNITS_PER_FOOT) or
-                              MAX_BLINK_DISTANCE -- Subtract a safety buffer of 1 ft to avoid landing inside the hit object; ensure that travel distance is not negative
+                              math.max(0, blinkHit.distance - UNITS_PER_FOOT * 2) or
+                              MAX_BLINK_DISTANCE -- Subtract a safety buffer of 2 ft to avoid landing inside the hit object; ensure that travel distance is not negative
     local candidatePosition = caster.position + blink.direction * blinkDistance
+    log:debug("candidate lateral position=%s blinkDistance=%.3f (%.3f ft)",
+              candidatePosition, blinkDistance, blinkDistance / UNITS_PER_FOOT)
+
     local floorHit = tes3.rayTest({
         position = candidatePosition + tes3vector3.new(0, 0, caster.height), -- Start the raycast from above the candidate position to ensure it can detect the floor even if the candidate position is slightly inside the ground
         direction = tes3vector3.new(0, 0, -1),
         maxDistance = caster.height * 2 -- Cast downwards for a distance equal to twice the caster's height to ensure it can find the floor even if the candidate position is above a ledge or stair
     })
-    if floorHit then candidatePosition.z = floorHit.intersection.z end
-
+    if floorHit then
+        log:debug("floorHit: intersection=%s reference=%s",
+                  floorHit.intersection, floorHit.reference and
+                      (floorHit.reference.id or "nil") or "nil")
+        candidatePosition.z = floorHit.intersection.z
+    else
+        log:debug("no floorHit found; leaving candidate z as %.3f",
+                  candidatePosition.z)
+    end
     local teleportParams = {
         reference = casterRef,
         position = candidatePosition,
@@ -72,7 +105,14 @@ local function onTickMistyStep(e)
 
     if caster.cell.isInterior then teleportParams.cell = caster.cell end
 
+    log:debug(
+        "teleport params: position=%s cell=%s orientation=%s suppressFader=%s",
+        candidatePosition, teleportParams.cell and
+            (teleportParams.cell.name or "unnamed") or "nil",
+        teleportParams.orientation, teleportParams.suppressFader)
     tes3.positionCell(teleportParams)
+    log:debug("teleport executed for %s",
+              casterRef and (casterRef.id or "unknown-id") or "unknown-ref")
 
     e.effectInstance.state = tes3.spellState.retired -- Retire the effect
 end
@@ -86,10 +126,6 @@ event.register(tes3.event.magicEffectsResolved, function()
         school = tes3.magicSchool.mysticism,
         baseCost = 150,
 
-        allowEnchanting = true,
-        allowSpellmaking = true,
-        appliesOnce = true,
-        canCastSelf = true,
         canCastTarget = false,
         canCastTouch = false,
         casterLinked = false,
@@ -154,6 +190,10 @@ local function registerModConfig()
             table = config
         }
     }
-    settings:createLogLevelOptions{config = config, configKey = "logLevel"}
+    settings:createLogLevelOptions{
+        config = config,
+        configKey = "logLevel",
+        logger = log
+    }
 end
 event.register(tes3.event.modConfigReady, registerModConfig)
