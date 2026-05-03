@@ -76,24 +76,51 @@ local function onTickMistyStep(e)
 
     local blinkDistance = blinkHit and
                               math.max(0, blinkHit.distance - UNITS_PER_FOOT * 2) or
-                              MAX_BLINK_DISTANCE -- Subtract a safety buffer of 2 ft to avoid landing inside the hit object; ensure that travel distance is not negative
-    local candidatePosition = caster.position + blink.direction * blinkDistance
-    log:debug("candidate lateral position=%s blinkDistance=%.3f (%.3f ft)",
-              candidatePosition, blinkDistance, blinkDistance / UNITS_PER_FOOT)
+                              MAX_BLINK_DISTANCE -- Subtract 2 feet from the hit distance to avoid blinking into the obstacle; if no hit, use max distance
+    local candidatePosition
+    local foundFloor = false
+    local maxAttempts = 5
+    local attempts = 0
+    local downOffset = tes3vector3.new(0, 0, caster.height)
 
-    local floorHit = tes3.rayTest({
-        position = candidatePosition + tes3vector3.new(0, 0, caster.height), -- Start the raycast from above the candidate position to ensure it can detect the floor even if the candidate position is slightly inside the ground
-        direction = tes3vector3.new(0, 0, -1),
-        maxDistance = caster.height * 2 -- Cast downwards for a distance equal to twice the caster's height to ensure it can find the floor even if the candidate position is above a ledge or stair
-    })
-    if floorHit then
-        log:debug("floorHit: intersection=%s reference=%s",
-                  floorHit.intersection, floorHit.reference and
-                      (floorHit.reference.id or "nil") or "nil")
-        candidatePosition.z = floorHit.intersection.z
-    else
-        log:debug("no floorHit found; leaving candidate z as %.3f",
-                  candidatePosition.z)
+    while attempts < maxAttempts and blinkDistance > 0 do
+        attempts = attempts + 1
+        candidatePosition = caster.position + blink.direction * blinkDistance
+        log:debug(
+            "attempt %d candidate lateral position=%s blinkDistance=%.3f (%.3f ft)",
+            attempts, candidatePosition, blinkDistance,
+            blinkDistance / UNITS_PER_FOOT)
+
+        local floorHit = tes3.rayTest({
+            position = candidatePosition + downOffset, -- start above candidate and cast down
+            direction = tes3vector3.new(0, 0, -1),
+            maxDistance = caster.height * 2
+        })
+
+        if floorHit then
+            log:debug("floorHit on attempt %d: intersection=%s reference=%s",
+                      attempts, floorHit.intersection, floorHit.reference and
+                          (floorHit.reference.id or "nil") or "nil")
+            candidatePosition.z = floorHit.intersection.z
+            foundFloor = true
+            break
+        else
+            log:debug(
+                "no floorHit on attempt %d; reducing blink distance and retrying",
+                attempts)
+            blinkDistance = blinkDistance - UNITS_PER_FOOT * 2 -- shorten by ~2 ft and try again
+        end
+    end
+
+    if not foundFloor then
+        log:warn(
+            "onTickMistyStep: unable to find valid landing surface after %d attempts, cancelling cast",
+            attempts)
+        if casterRef == tes3.player then
+            tes3.messageBox("Misty Step failed: no safe landing spot found.")
+        end
+        e.effectInstance.state = tes3.spellState.retired
+        return
     end
     local teleportParams = {
         reference = casterRef,
