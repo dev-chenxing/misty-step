@@ -184,17 +184,25 @@ event.register(tes3.event.magicEffectsResolved, function()
 end)
 
 event.register(tes3.event.loaded, function()
-    local spell = tes3.createObject({objectType = tes3.objectType.spell})
+    local SPELL_ID = "misty step"
+    local spell = tes3.getObject(SPELL_ID)
+    if not spell then
+        spell = tes3.createObject({
+            id = SPELL_ID,
+            objectType = tes3.objectType.spell
+        })
+        tes3.setSourceless(spell)
+        spell.name = "Misty Step"
+
+        local effect = spell.effects[1]
+        effect.id = tes3.effect.mistyStep
+        effect.rangeType = tes3.effectRange.self
+    end
     ---@cast spell tes3spell
-    tes3.setSourceless(spell)
-    spell.name = "Misty Step"
-    spell.magickaCost = 1
-
-    local effect = spell.effects[1]
-    effect.id = tes3.effect.mistyStep
-    effect.rangeType = tes3.effectRange.self
-
-    tes3.addSpell({reference = tes3.mobilePlayer, spell = spell})
+    -- Only add the spell if the player doesn't already have it
+    if not tes3.hasSpell({reference = tes3.player, spell = SPELL_ID}) then
+        tes3.addSpell({reference = tes3.player, spell = spell})
+    end
 end)
 
 event.register(tes3.event.initialized,
