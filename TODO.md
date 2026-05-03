@@ -14,8 +14,13 @@
   - [x] feat: validate the landing spot vertically; the main failure case is blinking into a ledge, stair, or uneven ground; do a short downward ray from candidate + upward offset to find the floor and set Z from that hit; if that ray misses, shorten the blink and try again, up to a maximum number of attempts (e.g. 5)
 - [x] feat: add MCM settings to toggle between "camera" (default) and "facing" target modes
 - [x] docs: add metadata.toml
-- [ ] feat: distribute the Misty Step spell
+- [x] feat: distribute the Misty Step spell
+  - [x] feat: create Misty Step scroll
 - [x] refactor: validate landing before magicka is consumed
+- [ ] fix: validate landing before scroll is consumed
 
 ## Icons
 - [ ] feat: add icon for effect
+
+## Docs
+- [ ] docs: update README with spell distribution (vendors, scrolls, etc.)
