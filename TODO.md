@@ -17,6 +17,7 @@
 - [x] feat: distribute the Misty Step spell
   - [x] feat: create Misty Step scroll
 - [x] refactor: validate landing before magicka is consumed
+- [x] refactor: extract magic-effect registration to `effects.lua`
 - [ ] fix: validate landing before scroll is consumed
 
 ## Icons
