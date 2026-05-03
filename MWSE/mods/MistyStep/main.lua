@@ -2,6 +2,9 @@ local constants = require("MistyStep.constants")
 local log = require("MistyStep.log")
 local blink = require("MistyStep.blink")
 
+-- Cache failed validations between `spellMagickaUse` and `spellCast` events.
+local pendingFailedCasts = {}
+
 tes3.claimSpellEffectId("mistyStep", 8377)
 
 --- Misty Step: Blink forward (60 ft at most), stopping before collision
@@ -96,6 +99,7 @@ event.register(tes3.event.loaded, function()
         })
         tes3.setSourceless(spell)
         spell.name = "Misty Step"
+        spell.magickaCost = 21
 
         local effect = spell.effects[1]
         effect.id = tes3.effect.mistyStep
@@ -110,5 +114,72 @@ end)
 
 event.register(tes3.event.initialized,
                function() log:info("Misty Step initialized.") end)
+
+-- Pre-validate landing during spellMagickaUse and prevent magicka spending on failure.
+event.register(tes3.event.spellMagickaUse, function(e)
+    if not e.spell or e.spell.id ~= constants.SPELL_ID then return end
+    log:debug("spellMagickaUse event for Misty Step detected.")
+
+    local casterRef = e.caster
+    if not casterRef then
+        log:debug("spellMagickaUse: missing caster reference")
+        return
+    end
+
+    local mobile = casterRef.mobile
+    if not mobile then
+        log:debug("spellMagickaUse: caster has no mobile component")
+        return
+    end
+    ---@cast mobile tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
+
+    local magickaCost = e.cost or 0
+    if mobile.magicka and mobile.magicka.current and mobile.magicka.current <
+        magickaCost then
+        log:debug(
+            "spellMagickaUse: insufficient magicka (have=%.0f need=%.0f), skipping landing validation",
+            mobile.magicka.current, magickaCost)
+        return
+    end
+
+    local ray = blink.getBlinkRay(mobile)
+    local landing = blink.findLandingPosition(casterRef, ray)
+    if not landing then
+        log:info(
+            "spellMagickaUse: no valid landing, preventing magicka cost for %s",
+            casterRef.id or "unknown")
+        e.cost = 0
+        pendingFailedCasts[casterRef] = "no-landing"
+    end
+end)
+
+-- Cancel the cast in spellCast if pre-validation failed, and show player-facing message.
+event.register(tes3.event.spellCast, function(e)
+    if not e.source or e.source.id ~= constants.SPELL_ID then return end
+    log:debug("spellCast event for Misty Step detected.")
+
+    local casterRef = e.caster
+    if not casterRef then return end
+
+    log:debug("spellCast: source=%s castChance=%.2f",
+              e.source and (e.source.id or "unknown") or "nil",
+              e.castChance or 0)
+    local reason = pendingFailedCasts[casterRef]
+    if reason then
+        pendingFailedCasts[casterRef] = nil
+        log:info("spellCast: cancelling Misty Step cast for %s due to %s",
+                 casterRef.id or "unknown", tostring(reason))
+        if casterRef == tes3.player then
+            tes3.messageBox("Misty Step failed: no safe landing spot found.")
+        end
+        e.castChance = 0
+    else
+        if (e.castChance or 0) == 0 then
+            log:warn(
+                "spellCast: castChance is 0 for %s but no pre-validation flag set; cast failed for another reason",
+                casterRef.id or "unknown")
+        end
+    end
+end)
 
 require("MistyStep.mcm")

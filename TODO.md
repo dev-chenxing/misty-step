@@ -15,6 +15,7 @@
 - [x] feat: add MCM settings to toggle between "camera" (default) and "facing" target modes
 - [x] docs: add metadata.toml
 - [ ] feat: distribute the Misty Step spell
+- [x] refactor: validate landing before magicka is consumed
 
 ## Icons
 - [ ] feat: add icon for effect
