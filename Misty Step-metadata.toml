@@ -7,7 +7,7 @@ authors = ["JosephMcKean"]
 version = "1.0.0"
 
 [tools.mwse]
-lua-mod = "MistyStep"
+lua-mod = "JosephMcKean.MistyStep"
 
 [dependencies]
 assets = [
