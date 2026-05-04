@@ -24,4 +24,4 @@
 - [x] feat: add icon for effect
 
 ## Docs
-- [ ] docs: update README with spell distribution (vendors, scrolls, etc.)
+- [x] docs: update README with spell distribution (vendors, scrolls, etc.)

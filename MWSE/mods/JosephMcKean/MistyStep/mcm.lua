@@ -27,5 +27,57 @@ local function createTemplate()
         configKey = "logLevel",
         logger = log
     }
+    template:createExclusionsPage({
+        label = "Spell Merchants",
+        description = "Select which spell merchants should sell the Misty Step spell.",
+        leftListLabel = "Merchants Selling Misty Step",
+        rightListLabel = "All Spell Merchants",
+        variable = mwse.mcm.createTableVariable {
+            id = "spellMerchants",
+            table = config
+        },
+        filters = {
+            {
+                label = "Spell Merchants",
+                callback = function()
+                    local merchants = {}
+                    for merchant in tes3.iterateObjects(tes3.objectType.npc) do
+                        ---@cast merchant tes3npc
+                        if merchant:offersService(tes3.merchantService.spells) then
+                            table.insert(merchants, merchant.id)
+                        end
+                    end
+                    table.sort(merchants)
+                    return merchants
+                end
+            }
+        }
+    })
+    template:createExclusionsPage({
+        label = "Scroll Merchants",
+        description = "Select which scroll merchants should sell the Scroll of Misty Step.",
+        leftListLabel = "Merchants Selling Scroll of Misty Step",
+        rightListLabel = "All Scroll Merchants",
+        variable = mwse.mcm.createTableVariable {
+            id = "scrollMerchants",
+            table = config
+        },
+        filters = {
+            {
+                label = "Scroll Merchants",
+                callback = function()
+                    local merchants = {}
+                    for merchant in tes3.iterateObjects(tes3.objectType.npc) do
+                        ---@cast merchant tes3npc
+                        if merchant.aiConfig.bartersBooks then
+                            table.insert(merchants, merchant.id)
+                        end
+                    end
+                    table.sort(merchants)
+                    return merchants
+                end
+            }
+        }
+    })
 end
 event.register(tes3.event.modConfigReady, createTemplate)
