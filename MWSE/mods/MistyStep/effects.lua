@@ -1,5 +1,6 @@
 local log = require("MistyStep.log")
 local blink = require("MistyStep.blink")
+local constants = require("MistyStep.constants")
 
 tes3.claimSpellEffectId("mistyStep", 8377)
 
@@ -25,6 +26,7 @@ local function onTickMistyStep(e)
               caster.cell and (caster.cell.name or "unnamed") or "nil")
     ---@cast caster tes3mobileCreature|tes3mobileNPC|tes3mobilePlayer
     local ray = blink.getBlinkRay(caster)
+    -- debug.mark(ray.position)
     log:debug("computed blink ray: origin=%s direction=%s", ray.position,
               ray.direction)
 
@@ -33,7 +35,7 @@ local function onTickMistyStep(e)
         log:warn(
             "onTickMistyStep: unable to find valid landing surface, cancelling cast")
         if casterRef == tes3.player then
-            tes3.messageBox("Misty Step failed: no safe landing spot found.")
+            tes3.messageBox(constants.NO_LANDING_MESSAGE)
         end
         e.effectInstance.state = tes3.spellState.retired
         return

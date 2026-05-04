@@ -1,5 +1,6 @@
 local log = require("MistyStep.log")
 local config = require("MistyStep.config")
+
 local blink = {}
 
 local UNITS_PER_FOOT = 22.1
@@ -16,7 +17,6 @@ function blink.getBlinkRay(caster)
     if config.targetMode == "camera" and caster == tes3.mobilePlayer then
         local pos = tes3.getPlayerEyePosition()
         local dir = tes3.getPlayerEyeVector()
-        log:debug("getBlinkRay (camera): position=%s direction=%s", pos, dir)
         return {position = pos, direction = dir}
     end
 
@@ -24,8 +24,6 @@ function blink.getBlinkRay(caster)
     local pos = caster.position +
                     tes3vector3.new(0, 0, (caster.height or 0) * 0.93)
     local dir = tes3vector3.new(math.sin(facing), math.cos(facing), 0)
-    log:debug("getBlinkRay (facing): position=%s direction=%s facing=%.3f", pos,
-              dir, facing)
     return {position = pos, direction = dir}
 end
 
@@ -51,17 +49,17 @@ function blink.findLandingPosition(casterRef, ray)
     log:debug("blink.findLandingPosition: initial distance=%.3f (%.3f ft)",
               blinkDistance, blinkDistance / UNITS_PER_FOOT)
 
-    local downOffset = tes3vector3.new(0, 0, caster.height or 0)
+    local downOffset = tes3vector3.new(0, 0, UNITS_PER_FOOT)
     local maxAttempts = 5
     local attempts = 0
 
     while attempts < maxAttempts and blinkDistance > 0 do
         attempts = attempts + 1
-        local candidatePosition = caster.position + ray.direction *
-                                      blinkDistance
+        local candidatePosition = ray.position + ray.direction * blinkDistance
         log:debug(
             "blink.findLandingPosition: attempt %d candidate=%s distance=%.3f",
             attempts, candidatePosition, blinkDistance)
+        -- debug.mark(candidatePosition, niColor.new(0, 1, 0)) -- Mark candidate position in green
 
         local floorHit = tes3.rayTest({
             position = candidatePosition + downOffset,
@@ -74,6 +72,7 @@ function blink.findLandingPosition(casterRef, ray)
             log:debug(
                 "blink.findLandingPosition: floorHit on attempt %d -> z=%.3f",
                 attempts, candidatePosition.z)
+            -- debug.mark(candidatePosition, niColor.new(0, 0, 1)) -- Mark floor hit position in blue
             return candidatePosition
         end
 
@@ -102,13 +101,15 @@ function blink.performTeleport(casterRef, position)
     local caster = casterRef.mobile
     if caster and caster.cell and caster.cell.isInterior then
         teleportParams.cell = caster.cell
+        teleportParams.forceCellChange = true
     end
-    log:debug("blink.performTeleport: teleporting %s to %s (cell=%s)",
-              casterRef and (casterRef.id or "unknown") or "nil", position,
-              teleportParams.cell and (teleportParams.cell.name or "unnamed") or
-                  "nil")
-    tes3.positionCell(teleportParams)
-    return true
+    local execuated = tes3.positionCell(teleportParams)
+    if execuated then
+        log:debug("blink.performTeleport: teleport successful to %s", position)
+    else
+        log:error("blink.performTeleport: teleport failed for unknown reason")
+    end
+    return execuated
 end
 
 return blink
