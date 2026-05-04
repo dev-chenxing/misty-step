@@ -1,5 +1,5 @@
-local log = require("MistyStep.log")
-local config = require("MistyStep.config")
+local log = require("JosephMcKean.MistyStep.log")
+local config = require("JosephMcKean.MistyStep.config")
 
 local blink = {}
 

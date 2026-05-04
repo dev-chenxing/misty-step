@@ -1,5 +1,5 @@
-local constants = require("MistyStep.constants")
-local log = require("MistyStep.log")
+local constants = require("JosephMcKean.MistyStep.constants")
+local log = require("JosephMcKean.MistyStep.log")
 
 local mistyStepSpell = tes3.getObject(constants.SPELL_ID)
 if not mistyStepSpell then

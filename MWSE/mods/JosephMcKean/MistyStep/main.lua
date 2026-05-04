@@ -1,11 +1,11 @@
-local constants = require("MistyStep.constants")
-local log = require("MistyStep.log")
-local blink = require("MistyStep.blink")
+local constants = require("JosephMcKean.MistyStep.constants")
+local log = require("JosephMcKean.MistyStep.log")
+local blink = require("JosephMcKean.MistyStep.blink")
 
-require("MistyStep.effects")
+require("JosephMcKean.MistyStep.effects")
 
 event.register(tes3.event.initialized, function()
-    require("MistyStep.spell")
+    require("JosephMcKean.MistyStep.spell")
     log:info("%s initialized", constants.MOD_NAME)
 end)
 
@@ -122,4 +122,4 @@ event.register(tes3.event.spellResist, function(e)
     end
 end)
 
-require("MistyStep.mcm")
+require("JosephMcKean.MistyStep.mcm")

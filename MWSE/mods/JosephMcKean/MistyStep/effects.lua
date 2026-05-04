@@ -1,6 +1,6 @@
-local log = require("MistyStep.log")
-local blink = require("MistyStep.blink")
-local constants = require("MistyStep.constants")
+local blink = require("JosephMcKean.MistyStep.blink")
+local constants = require("JosephMcKean.MistyStep.constants")
+local log = require("JosephMcKean.MistyStep.log")
 
 tes3.claimSpellEffectId("mistyStep", 8377)
 

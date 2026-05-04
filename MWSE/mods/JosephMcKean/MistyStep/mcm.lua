@@ -1,6 +1,6 @@
-local constants = require("MistyStep.constants")
-local config = require("MistyStep.config")
-local log = require("MistyStep.log")
+local constants = require("JosephMcKean.MistyStep.constants")
+local config = require("JosephMcKean.MistyStep.config")
+local log = require("JosephMcKean.MistyStep.log")
 
 local function createTemplate()
     local template = mwse.mcm.createTemplate({
