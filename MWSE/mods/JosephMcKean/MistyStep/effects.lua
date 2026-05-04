@@ -72,8 +72,9 @@ event.register(tes3.event.magicEffectsResolved, function()
         unreflectable = false,
         usesNegativeLighting = false,
 
-        icon = "s\\Tx_S_fire_damage.tga",
-        lighting = tes3vector3.new(0.99, 0.95, 0.67),
+        icon = "jsmk\\ms\\Tx_S_misty_step.dds",
+        bigIcon = "jsmk\\ms\\B_Tx_S_misty_step.dds",
+        lighting = tes3vector3.new(0.66, 0.85, 0.98),
         particleTexture = "vfx_particle064.tga",
         castSound = "mysticism cast",
         castVFX = "VFX_MysticismCast",

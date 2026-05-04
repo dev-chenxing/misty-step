@@ -11,5 +11,6 @@ lua-mod = "JosephMcKean.MistyStep"
 
 [dependencies]
 assets = [
-  # "Icons\\jsmk\\Tx_S_misty_step.dds",
+  "Icons\\jsmk\\ms\\Tx_S_misty_step.dds",
+  "Icons\\jsmk\\ms\\B_Tx_S_misty_step.dds",
 ]
