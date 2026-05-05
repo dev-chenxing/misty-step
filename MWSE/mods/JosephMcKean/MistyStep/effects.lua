@@ -56,7 +56,7 @@ event.register(tes3.event.magicEffectsResolved, function()
         description = ("This spell effect allows the caster to teleport a short distance."),
 
         school = tes3.magicSchool.mysticism,
-        baseCost = 150,
+        baseCost = 3,
 
         canCastTarget = false,
         canCastTouch = false,

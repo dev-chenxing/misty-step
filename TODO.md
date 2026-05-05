@@ -25,3 +25,32 @@
 
 ## Docs
 - [x] docs: update README with spell distribution (vendors, scrolls, etc.)
+
+# Wall of Force
+
+- Creates a temporary planar barrier (vertical wall segment).
+- Physically blocks actors and projectiles
+- Subtle shimmer visual effect on the wall surface
+- Duration-based. Limit to 1 active wall per caster.
+
+## MWSE
+- [x] chore: scaffold the mod layout
+- [ ] chore: add spellMerchant and scrollMerchant distribution lists to MCM
+- [x] feat: claim spell effect id
+- [ ] feat: add magic effect
+  - [ ] fix: tweak the base cost to be more balanced
+- [ ] feat: create Wall of Force spell
+- [ ] feat: implement "wall of force" effect logic
+  - [ ] feat: derive wall position and orientation from the caster
+  - [ ] feat: spawn a thin "invisible" box niTriShape visual
+  - [ ] feat: enforce 1 active wall per caster; if the caster already has an active wall, despawn it before creating a new one
+  - [ ] test: verify that the wall blocks actors and projectiles
+  - [ ] test: verify that the wall is cleaned up after the duration expires or is replaced
+- [ ] feat: add a shimmer visual effect on the wall surface
+- [ ] docs: add metadata.toml
+
+## Icons
+- [ ] feat: add icon for effect
+
+## Docs
+- [ ] docs: update README with Wall of Force spell details and distribution
