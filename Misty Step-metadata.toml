@@ -1,7 +1,7 @@
 [package]
 name = "Misty Step"
 description = "Adds the 'Misty Step' short-range teleport magic effect to Morrowind."
-homepage = "https://www.nexusmods.com/morrowind/mods/xxxxx"
+homepage = "https://www.nexusmods.com/games/morrowind/mods/58883"
 repository = "https://github.com/dev-chenxing/misty-step"
 authors = ["JosephMcKean"]
 version = "1.0.0"
