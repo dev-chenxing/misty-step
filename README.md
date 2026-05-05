@@ -7,7 +7,7 @@ Misty Step is a Morrowind mod built with MWSE-Lua that provides a short-range te
 **Key features**
 
 - Adds a `Misty Step` spell that teleports the caster up to ~60 feet (stops before collisions).
-- Two targeting modes: `camera` (aim at where you land on the floor) and `facing` (aim in the direction the caster is facing). Configurable via MWSE MCM.
+  - Two targeting modes: `camera` (aim at where you land on the floor) and `facing` (aim in the direction the caster is facing). Configurable via MWSE MCM.
 
 **How to get it**
 

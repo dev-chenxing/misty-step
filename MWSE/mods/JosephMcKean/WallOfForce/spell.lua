@@ -57,7 +57,7 @@ if scrollLeveledList and scrollLeveledList.objectType ==
     ---@cast scrollLeveledList tes3leveledItem
     scrollLeveledList:insert(scroll, 1)
     log:debug(
-    "Inserted Wall of Force scroll into random_scroll_all leveled list")
+        "Inserted Wall of Force scroll into random_scroll_all leveled list")
 else
     log:error(
         "Could not find random_scroll_all leveled list to insert Wall of Force scroll")
@@ -95,5 +95,4 @@ local function addSpellToMerchant(e)
         end
     end
 end
-
 event.register(tes3.event.activate, addSpellToMerchant)
