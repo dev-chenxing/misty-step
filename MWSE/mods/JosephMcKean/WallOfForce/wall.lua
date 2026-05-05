@@ -54,9 +54,28 @@ function wall.spawn(casterRef, sourceInstance)
         sourceSerial = sourceInstance and sourceInstance.serialNumber or nil
     }
 
-    log:info("Wall of Force scaffold invoked for %s", casterRef.id or "unknown")
+    -- Derive wall transform from caster position and facing.
+    -- Position: in front of the caster at a configurable distance.
+    -- Orientation: align to caster orientation so the wall faces outward.
 
-    -- TODO: implement the actual wall spawning logic here. For now, this is just a placeholder.
+    local facing = nil
+    if casterRef and casterRef.mobile and casterRef.mobile.facing then
+        facing = casterRef.mobile.facing
+    else
+        log:error(
+            "wall.spawn: missing caster facing; cannot derive wall orientation")
+        activeWalls[key] = nil
+        return false
+    end
+
+    local forward = tes3vector3.new(math.sin(facing), math.cos(facing), 0)
+
+    -- Anchor the wall at bottom-center (caster's position + forward offset)
+    local position = casterRef.position + forward * constants.WALL_DISTANCE
+
+    activeWalls[key].bottomCenter = position
+    activeWalls[key].facing = facing
+
     return true
 end
 
@@ -73,7 +92,7 @@ function wall.despawn(sourceInstance, casterRef)
     activeWalls[key] = nil
     log:info("Wall of Force despawned for %s", wallData.casterId or "unknown")
 
-    -- TODO: remove the spawned wall object once the real wall visual/collision is implemented.
+    -- If we had created any runtime objects they would be cleaned up here.
     return true
 end
 

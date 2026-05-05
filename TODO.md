@@ -40,8 +40,8 @@
 - [x] feat: add magic effect
 - [x] feat: create Wall of Force spell
 - [ ] feat: implement "wall of force" effect logic
-  - [ ] feat: derive wall position and orientation from the caster
-  - [ ] feat: spawn a thin "invisible" box niTriShape visual
+  - [x] feat: derive wall position and orientation from the caster
+  - [ ] feat: implement spawning a thin "invisible" box niTriShape visual
   - [ ] feat: enforce 1 active wall per caster; if the caster already has an active wall, despawn it before creating a new one
   - [ ] test: verify that the wall blocks actors and projectiles
   - [ ] test: verify that the wall is cleaned up after the duration expires or is replaced
