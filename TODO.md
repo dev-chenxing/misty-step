@@ -35,11 +35,10 @@
 
 ## MWSE
 - [x] chore: scaffold the mod layout
-- [ ] chore: add spellMerchant and scrollMerchant distribution lists to MCM
+- [x] chore: add spellMerchant and scrollMerchant distribution lists to MCM
 - [x] feat: claim spell effect id
-- [ ] feat: add magic effect
-  - [ ] fix: tweak the base cost to be more balanced
-- [ ] feat: create Wall of Force spell
+- [x] feat: add magic effect
+- [x] feat: create Wall of Force spell
 - [ ] feat: implement "wall of force" effect logic
   - [ ] feat: derive wall position and orientation from the caster
   - [ ] feat: spawn a thin "invisible" box niTriShape visual

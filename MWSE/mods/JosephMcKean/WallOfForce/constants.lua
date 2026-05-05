@@ -3,7 +3,9 @@ local constants = {
     SPELL_ID = "wall of force",
     SCROLL_ID = "sc_wall_of_force",
     ENCHANTMENT_ID = "wall_of_force_en",
-    MAGICKA_COST = 45
+    BASE_COST = 190,
+    SPELL_DURATION = 60,
+    MAGICKA_COST = 560
 }
 
 return constants

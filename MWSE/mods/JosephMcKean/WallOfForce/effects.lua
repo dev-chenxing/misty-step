@@ -46,7 +46,7 @@ event.register(tes3.event.magicEffectsResolved, function()
         description = "Creates a temporary planar barrier.",
 
         school = tes3.magicSchool.alteration,
-        baseCost = 3,
+        baseCost = constants.BASE_COST,
 
         canCastTarget = false,
         canCastTouch = false,

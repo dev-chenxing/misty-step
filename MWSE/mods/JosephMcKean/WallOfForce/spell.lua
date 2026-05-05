@@ -14,7 +14,7 @@ if not wallOfForceSpell then
 
     wallOfForceSpell.effects[1].id = tes3.effect.wallOfForce
     wallOfForceSpell.effects[1].rangeType = tes3.effectRange.self
-    wallOfForceSpell.effects[1].duration = 600
+    wallOfForceSpell.effects[1].duration = constants.SPELL_DURATION
 end
 ---@cast wallOfForceSpell tes3spell
 
@@ -29,7 +29,7 @@ if not enchantment then
     })
     enchantment.effects[1].id = tes3.effect.wallOfForce
     enchantment.effects[1].rangeType = tes3.effectRange.self
-    enchantment.effects[1].duration = 600
+    enchantment.effects[1].duration = constants.SPELL_DURATION
     tes3.setSourceless(enchantment)
 end
 ---@cast enchantment tes3enchantment
@@ -42,7 +42,7 @@ if not scroll then
     })
     tes3.setSourceless(scroll)
     scroll.name = "Scroll of Wall of Force"
-    scroll.value = 180
+    scroll.value = 680
     scroll.weight = 0.2
     scroll.icon = "m\\tx_scroll_01.tga"
     scroll.mesh = "m\\text_scroll_01.nif"
