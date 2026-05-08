@@ -41,15 +41,24 @@
 - [x] feat: create Wall of Force spell
 - [ ] feat: implement "wall of force" effect logic
   - [x] feat: derive wall position and orientation from the caster
-  - [ ] feat: implement spawning a thin "invisible" box niTriShape visual
+  - [ ] feat: implement wall static visual
+    - [ ] feat: add a helper that creates or fetches a reusable `tes3static` baseObject at runtime via `tes3.createObject`, then assigns the mesh path
+    - [ ] feat: extend `wall.spawn` to place a reference with `tes3.createReference` using the computed position and orientation; store the reference in `activeWalls[key]`
+    - [ ] feat: extend `wall.despawn` to delete or disable the reference before clearing `activeWalls[key]`
   - [ ] feat: enforce 1 active wall per caster; if the caster already has an active wall, despawn it before creating a new one
   - [ ] test: verify that the wall blocks actors and projectiles
   - [ ] test: verify that the wall is cleaned up after the duration expires or is replaced
 - [ ] feat: add a shimmer visual effect on the wall surface
-- [ ] docs: add metadata.toml
+- [ ] test: verify that recasting rapidly does not cause errors or leave orphaned wall references
+- [ ] test: verify that walking into the wall with the player or an NPC results in a collision and does not allow passing through
+
+## Mesh
+- [ ] feat: create a thin-box Nif for the wall with a faint material
 
 ## Icons
 - [ ] feat: add icon for effect
 
 ## Docs
+- [ ] docs: add metadata.toml
 - [ ] docs: update README with Wall of Force spell details and distribution
+- [ ] docs: add the mesh to asset in metadata.toml

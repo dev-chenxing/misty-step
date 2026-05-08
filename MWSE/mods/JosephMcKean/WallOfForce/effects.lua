@@ -56,10 +56,10 @@ event.register(tes3.event.magicEffectsResolved, function()
         hasNoMagnitude = true,
         illegalDaedra = false,
         isHarmful = false,
-        nonRecastable = true,
+        nonRecastable = false,
         targetsAttributes = false,
         targetsSkills = false,
-        unreflectable = true,
+        unreflectable = false,
         usesNegativeLighting = false,
 
         icon = "s\\tx_s_shield.dds",
