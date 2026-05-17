@@ -8,14 +8,13 @@ if not mistyStepSpell then
         id = constants.SPELL_ID,
         objectType = tes3.objectType.spell
     })
-    tes3.setSourceless(mistyStepSpell)
-    mistyStepSpell.name = "Misty Step"
-    mistyStepSpell.magickaCost = constants.MAGICKA_COST
-
-    mistyStepSpell.effects[1].id = tes3.effect.mistyStep
-    mistyStepSpell.effects[1].rangeType = tes3.effectRange.self
 end
 ---@cast mistyStepSpell tes3spell
+tes3.setSourceless(mistyStepSpell)
+mistyStepSpell.name = "Misty Step"
+mistyStepSpell.magickaCost = constants.MAGICKA_COST
+mistyStepSpell.effects[1].id = tes3.effect.mistyStep
+mistyStepSpell.effects[1].rangeType = tes3.effectRange.self
 
 local enchantment = tes3.getObject(constants.ENCHANTMENT_ID)
 if not enchantment then
@@ -26,11 +25,11 @@ if not enchantment then
         chargeCost = constants.MAGICKA_COST,
         maxCharge = constants.MAGICKA_COST
     })
-    enchantment.effects[1].id = tes3.effect.mistyStep
-    enchantment.effects[1].rangeType = tes3.effectRange.self
-    tes3.setSourceless(enchantment)
 end
 ---@cast enchantment tes3enchantment
+enchantment.effects[1].id = tes3.effect.mistyStep
+enchantment.effects[1].rangeType = tes3.effectRange.self
+tes3.setSourceless(enchantment)
 
 local scroll = tes3.getObject(constants.SCROLL_ID)
 if not scroll then
@@ -38,16 +37,16 @@ if not scroll then
         id = constants.SCROLL_ID,
         objectType = tes3.objectType.book
     })
-    tes3.setSourceless(scroll)
-    scroll.name = "Scroll of Misty Step"
-    scroll.value = 112
-    scroll.weight = 0.2
-    scroll.icon = "m\\tx_scroll_01.tga"
-    scroll.mesh = "m\\text_scroll_01.nif"
-    scroll.type = tes3.bookType.scroll
-    scroll.enchantment = enchantment
 end
 ---@cast scroll tes3book
+tes3.setSourceless(scroll)
+scroll.name = "Scroll of Misty Step"
+scroll.value = 112
+scroll.weight = 0.2
+scroll.icon = "m\\tx_scroll_01.tga"
+scroll.mesh = "m\\text_scroll_01.nif"
+scroll.type = tes3.bookType.scroll
+scroll.enchantment = enchantment
 
 local scrollLeveledList = tes3.getObject("random_scroll_all")
 if scrollLeveledList and scrollLeveledList.objectType ==
